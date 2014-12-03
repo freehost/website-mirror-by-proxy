@@ -1,5 +1,5 @@
 .buildpath
-conf-local.inc
-log/*
+public/conf-local.inc
+public/log/*
 .project
 .settings
