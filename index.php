@@ -5,6 +5,8 @@ Log::add($_SERVER);
 Log::add(new Conf());
 
 $request = new ProxyHttpRequest();
+Log::add($request);
+
 $message = $request->send();
 Log::add($message);
 

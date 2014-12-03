@@ -19,7 +19,7 @@ class TextExternalUrlFilters
 		}
 	}
 
-	public static function applyAll(&$body, $content_type)
+	public static function applyAll(&$body, $content_type = NULL)
 	{
 		foreach (self::$hosts as $host => $patterns) {
 			
@@ -37,11 +37,11 @@ class TextExternalUrlFilters
 				$searches['"' . $host . '"'] = '"' .
 					 self::getBaseUrlHostAndPath() . '"';
 			}
-
+			
 			// Because slashes are escaped in JSON, escape all search/replace patterns too.
-			if($content_type == ProxyHttpRequest::CONTENT_TYPE_JSON) {
+			if ($content_type == ProxyHttpRequest::CONTENT_TYPE_JSON) {
 				$searches2 = array();
-				foreach($searches as $search => $replace) {
+				foreach ($searches as $search => $replace) {
 					$search = str_replace('/', '\/', $search);
 					$replace = str_replace('/', '\/', $replace);
 					$searches2[$search] = $replace;
@@ -52,6 +52,13 @@ class TextExternalUrlFilters
 			foreach ($searches as $search => $replace) {
 				$body = str_ireplace($search, $replace, $body);
 			}
+		}
+	}
+
+	public static function applyReverse(&$body)
+	{
+		foreach (Conf::$rwb_alt_url_bases as $alt_url_base) {
+			$body = str_replace($alt_url_base, '', $body);
 		}
 	}
 

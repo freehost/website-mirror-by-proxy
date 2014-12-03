@@ -37,11 +37,13 @@ class ProxyHttpRequest extends HttpRequest
 				// Use in DomUtlFilters for relative URLs.
 				$base_url_suffix = http_build_scheme_host($url) . '/';
 				RedirectWhenBlockedFull::setBaseUrlSuffix($base_url_suffix);
-				
 			} else {
 				$url = Conf::$default_upstream_base_url . $url;
 			}
 		}
+		
+		// Reverse rewrites of parameters inside URL.
+		TextExternalUrlFilters::applyReverse($url);
 		return $url;
 	}
 
@@ -66,6 +68,14 @@ class ProxyHttpRequest extends HttpRequest
 	{
 		$message = parent::send();
 		Log::add($message);
+		
+		// If redirect, just rewrite Location header and return.
+		$headers = $message->getHeaders();
+		if (isset($headers['Location'])) {
+			TextExternalUrlFilters::applyAll($headers['Location']);
+			$message->setHeaders($headers);
+			return $message;
+		}
 		
 		$this->message_content_type = $this->getContentTypeFromMessage($message);
 		
@@ -98,7 +108,7 @@ class ProxyHttpRequest extends HttpRequest
 					false);
 				
 				// Might be for example JSONP data served with an incorrect header.
-				if (! $dom->find('body')) {
+				if (! $dom || ! $dom->find('body')) {
 					break;
 				}
 				
