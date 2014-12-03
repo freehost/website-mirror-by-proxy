@@ -149,7 +149,7 @@ class ProxyHttpRequest extends HttpRequest
 	private static function removeThisScriptDirFromUrl(&$url)
 	{
 		$this_script_dir = dirname($_SERVER['SCRIPT_NAME']);
-		if (substr($url, 0, strlen($this_script_dir)) == $this_script_dir) {
+		if ($this_script_dir != '/' && substr($url, 0, strlen($this_script_dir)) == $this_script_dir) {
 			$url = substr($url, strlen($this_script_dir));
 		}
 		return $url;
