@@ -1,0 +1,5 @@
+.buildpath
+conf-local.inc
+log/*
+.project
+.settings
