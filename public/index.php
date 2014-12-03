@@ -24,4 +24,7 @@ if (isset($downstream_origin)) {
 	}
 }
 
+// Default cache. Will be overwritten by message below if it has it's own Cache-Control header.
+header('Cache-Control: max-age=' . Conf::$default_cache_control_max_age);
+
 $message->send();
