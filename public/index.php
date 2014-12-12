@@ -1,6 +1,11 @@
 <?php
 require 'main.inc';
 
+// Default cache. 
+// Will be overwritten by message below if it has it's own Cache-Control header.
+// Send this early, to prevent caching error pages for longer than the duration.
+header('Cache-Control: max-age=' . Conf::$default_cache_control_max_age);
+
 Log::add($_SERVER);
 Log::add(new Conf());
 
@@ -23,8 +28,5 @@ if (isset($downstream_origin)) {
 		}
 	}
 }
-
-// Default cache. Will be overwritten by message below if it has it's own Cache-Control header.
-header('Cache-Control: max-age=' . Conf::$default_cache_control_max_age);
 
 $message->send();
