@@ -57,8 +57,8 @@ class TextExternalUrlFilters
 
 	public static function applyReverse(&$body)
 	{
-		foreach (Conf::$rwb_alt_url_bases as $alt_url_base) {
-			$body = str_replace($alt_url_base, '', $body);
+		foreach (RedirectWhenBlockedFull::getAltBaseUrls() as $alt_base_url) {
+			$body = str_replace($alt_base_url, '', $body);
 		}
 	}
 

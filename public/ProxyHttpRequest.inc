@@ -22,7 +22,7 @@ class ProxyHttpRequest extends HttpRequest
 	{
 		static $url;
 		if (! isset($url)) {
-			$url = RedirectWhenBlockedFull::getRequestUriWithoutGetParam();
+			$url = RedirectWhenBlockedFull::getRequestUriWithoutQueryStringParam();
 			$this->removeThisScriptDirFromUrl($url);
 			
 			if (RedirectWhenBlockedFull::startsWith($url, '/http://') ||
