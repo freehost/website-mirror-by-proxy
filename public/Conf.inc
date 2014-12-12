@@ -3,10 +3,6 @@
 class Conf
 {
 
-	public static $rwb_alt_url_bases;
-
-	public static $rwb_alt_url_collections;
-
 	public static $default_cache_control_max_age = 60;
 	
 	public static $default_upstream_base_url;

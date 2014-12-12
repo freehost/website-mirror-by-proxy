@@ -11,8 +11,7 @@ require 'rwb/RedirectWhenBlockedFull.inc';
 
 require 'conf-local.inc';
 
-RedirectWhenBlockedFull::setUrls(Conf::$rwb_alt_url_bases, 
-	Conf::$rwb_alt_url_collections);
+RedirectWhenBlockedFull::setUrlsFromConfDir();
 
 TextExternalUrlFilters::addHost(Conf::getDefaultUpstreamBaseUrlComponent('host'));
 
