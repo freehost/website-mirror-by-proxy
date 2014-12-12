@@ -3,7 +3,7 @@
 class TextInternalUrlFilters
 {
 
-	private static $searches;
+	private static $searches = array();
 
 	public static function addSearch($search, $replace_prefix = '')
 	{

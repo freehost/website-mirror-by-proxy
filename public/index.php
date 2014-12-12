@@ -17,7 +17,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 }
 
 if (isset($downstream_origin)) {
-	foreach (Conf::$rwb_alt_url_bases as $alt_url_base) {
+	foreach (RedirectWhenBlockedFull::getAltBaseUrls() as $alt_url_base) {
 		if ($downstream_origin == http_build_scheme_host($alt_url_base)) {
 			header('Access-Control-Allow-Origin: ' . $downstream_origin);
 		}
