@@ -104,8 +104,7 @@ class ProxyHttpRequest extends HttpRequest
 			case self::CONTENT_TYPE_TEXT_HTML:
 				
 				$body = $message->getBody();
-				$dom = str_get_html($body, false, false, DEFAULT_TARGET_CHARSET, 
-					false);
+				$dom = str_get_html($body, false, false, '', false);
 				
 				// Might be for example JSONP data served with an incorrect header.
 				if (! $dom || ! $dom->find('body')) {
@@ -149,7 +148,8 @@ class ProxyHttpRequest extends HttpRequest
 	private static function removeThisScriptDirFromUrl(&$url)
 	{
 		$this_script_dir = dirname($_SERVER['SCRIPT_NAME']);
-		if ($this_script_dir != '/' && substr($url, 0, strlen($this_script_dir)) == $this_script_dir) {
+		if ($this_script_dir != '/' &&
+			 substr($url, 0, strlen($this_script_dir)) == $this_script_dir) {
 			$url = substr($url, strlen($this_script_dir));
 		}
 		return $url;
