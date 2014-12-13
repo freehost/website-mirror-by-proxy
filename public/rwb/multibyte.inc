@@ -4,6 +4,10 @@ function mb_convert_encoding_plus($str, $to_encoding, $from_encoding)
 {
 	$converted = null;
 	
+	if(!$to_encoding || !$from_encoding) {
+		return $str;
+	}
+	
 	if (mb_supports_encoding($from_encoding) &&
 		 mb_supports_encoding($to_encoding)) {
 		$converted = mb_convert_encoding($str, $to_encoding, $from_encoding);

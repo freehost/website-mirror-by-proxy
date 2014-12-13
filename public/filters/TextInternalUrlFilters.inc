@@ -5,21 +5,19 @@ class TextInternalUrlFilters
 
 	private static $searches = array();
 
-	public static function addSearch($search, $replace_prefix = '')
+	public static function addSearch($search, $replace = '')
 	{
-		self::$searches[$search] = $replace_prefix;
+		if (! $replace) {
+			$replace = rtrim($search, '/') . './';
+		}
+		
+		self::$searches[$search] = $replace;
 	}
 
 	public static function applyAll(&$body)
 	{
-		foreach (self::$searches as $search => $replace_prefix) {
-			$body = str_ireplace($search, self::getReplace($replace_prefix), 
-				$body);
+		foreach (self::$searches as $search => $replace) {
+			$body = str_ireplace($search, $replace, $body);
 		}
-	}
-
-	public static function getReplace($replace_prefix)
-	{
-		return $replace_prefix . './';
 	}
 }

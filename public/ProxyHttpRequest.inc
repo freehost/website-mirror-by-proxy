@@ -114,6 +114,8 @@ class ProxyHttpRequest extends HttpRequest
 				$title = '';
 				foreach ($dom->find('head title') as $title) {
 					$title = $title->text();
+					$title = mb_convert_encoding_plus($title, 'UTF-8', 
+						$this->getCharsetFromHeadersOrDom($message, $dom));
 					break;
 				}
 				
@@ -153,6 +155,26 @@ class ProxyHttpRequest extends HttpRequest
 			$url = substr($url, strlen($this_script_dir));
 		}
 		return $url;
+	}
+
+	private static function getCharsetFromHeadersOrDom(HttpMessage $message, 
+		simple_html_dom $dom)
+	{
+		// TODO: get charset from headers.
+		foreach ($dom->find('meta[http-equiv=Content-Type]') as $meta) {
+			$content = $meta->getAttribute('content');
+			if ($content) {
+				$content_chunks = explode(';', $content, 2);
+				if (isset($content_chunks[1])) {
+					$charset_key_value_str = trim($content_chunks[1]);
+					$charset_key_value_arr = explode('=', 
+						$charset_key_value_str, 2);
+					if (isset($charset_key_value_arr[1])) {
+						return $charset_key_value_arr[1];
+					}
+				}
+			}
+		}
 	}
 
 	private static function getContentTypeFromMessage(HttpMessage $message)
