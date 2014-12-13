@@ -191,6 +191,7 @@ class ProxyHttpRequest extends HttpRequest
 			case 'application/json':
 				return self::CONTENT_TYPE_JSON;
 			
+			case 'application/javascript':
 			case 'application/x-javascript':
 				return self::CONTENT_TYPE_JAVASCRIPT;
 			

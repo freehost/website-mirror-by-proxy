@@ -23,6 +23,13 @@ class DomUrlFilters
 			$attr_val = $element->getAttribute($attribute);
 			if ($attr_val) {
 				
+				// Turn protocol relative URLs into HTTPS.
+				if($attr_val[1] == '/' && $attr_val[0] == '/') {
+					$attr_val = 'https:' . $attr_val;
+					$element->setAttribute($attribute, $attr_val);
+					continue;
+				}
+				
 				$attr_val_components = parse_url($attr_val);
 				
 				// Remove default host.

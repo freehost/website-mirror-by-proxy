@@ -41,11 +41,16 @@ class TextExternalUrlFilters
 			// Because slashes are escaped in JSON, escape all search/replace patterns too.
 			if ($content_type == ProxyHttpRequest::CONTENT_TYPE_JSON) {
 				$searches2 = array();
+				
+				// Convert protocol relative URLs to HTTPS.
+				$searches2['"\/\/' . $host] = '"https:\/\/' . $host;
+				
 				foreach ($searches as $search => $replace) {
 					$search = str_replace('/', '\/', $search);
 					$replace = str_replace('/', '\/', $replace);
 					$searches2[$search] = $replace;
 				}
+				
 				$searches = $searches2;
 			}
 			

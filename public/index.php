@@ -25,6 +25,9 @@ if (isset($downstream_origin)) {
 	foreach (RedirectWhenBlockedFull::getAltBaseUrls() as $alt_url_base) {
 		if ($downstream_origin == http_build_scheme_host($alt_url_base)) {
 			header('Access-Control-Allow-Origin: ' . $downstream_origin);
+			
+			// See http://stackoverflow.com/questions/12409600/error-request-header-field-content-type-is-not-allowed-by-access-control-allow.
+			header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 		}
 	}
 }
