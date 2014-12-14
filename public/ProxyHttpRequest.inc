@@ -135,18 +135,35 @@ class ProxyHttpRequest extends HttpRequest
 				
 				DomUrlFilters::applyAll($dom);
 				
-				if(Conf::$html_body_appendix) {
-					foreach($dom->find('body') as $b) {
+				if (Conf::$html_body_appendix) {
+					foreach ($dom->find('body') as $b) {
 						$b->innertext .= Conf::$html_body_appendix;
 						break;
 					}
+					
+					$dom_do_reset = true;
 				}
 				
-				if(Conf::$html_head_appendix) {
-					foreach($dom->find('head') as $h) {
+				if (Conf::$html_head_appendix) {
+					foreach ($dom->find('head') as $h) {
 						$h->innertext .= Conf::$html_head_appendix;
 						break;
 					}
+					
+					$dom_do_reset = true;
+				}
+				
+				if (count($dom->find('script[async]')) > 0 && $dom_do_reset) {
+					
+					// Bug in Simple HTML Dom means that DOM has to be reloaded before further edits.
+					$body = $dom->__toString();
+					$dom = str_get_html($body, false, false, '', false);
+					$dom_do_reset = false;
+				}
+				
+				// Remove 'async' attributes because they break the page in IE11 when loaded in our iframe.
+				foreach ($dom->find('script[async]') as $x) {
+					$x->removeAttribute('async', '');
 				}
 				
 				$body = $dom->__toString();
