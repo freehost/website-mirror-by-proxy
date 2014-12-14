@@ -8,9 +8,15 @@ class Conf
 	public static $default_upstream_base_url;
 	
 	public static $html_body_appendix = '';
+	
+	public static $html_head_appendix = '';
 
 	public static function appendToHtmlBody($str) {
 		self::$html_body_appendix .= $str;
+	}
+
+	public static function appendToHtmlHead($str) {
+		self::$html_head_appendix .= $str;
 	}
 	
 	public static function getDefaultUpstreamBaseUrlComponent($name)

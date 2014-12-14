@@ -142,6 +142,13 @@ class ProxyHttpRequest extends HttpRequest
 					}
 				}
 				
+				if(Conf::$html_head_appendix) {
+					foreach($dom->find('head') as $h) {
+						$h->innertext .= Conf::$html_head_appendix;
+						break;
+					}
+				}
+				
 				$body = $dom->__toString();
 				break;
 		}
