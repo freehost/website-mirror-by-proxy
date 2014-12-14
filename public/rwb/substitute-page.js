@@ -107,7 +107,7 @@ for(var i in alt_base_urls) {
 			dataType: 'jsonp',
 			url: alt_url
 		}).success(function(data) {
-			if(!done && data && data.html) {
+			if(!done && typeof data.html !== 'undefined') {
 				done = true;
 				console.log(alt_url + ' succeeded');
 				$iframe = $('iframe').clone();
