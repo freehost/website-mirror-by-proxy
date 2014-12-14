@@ -6,7 +6,13 @@ class Conf
 	public static $default_cache_control_max_age = 60;
 	
 	public static $default_upstream_base_url;
+	
+	public static $html_body_appendix = '';
 
+	public static function appendToHtmlBody($str) {
+		self::$html_body_appendix .= $str;
+	}
+	
 	public static function getDefaultUpstreamBaseUrlComponent($name)
 	{
 		$components = self::getDefaultUpstreamBaseUrlComponents();

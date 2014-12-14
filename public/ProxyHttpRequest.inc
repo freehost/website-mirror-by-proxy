@@ -134,6 +134,14 @@ class ProxyHttpRequest extends HttpRequest
 				}
 				
 				DomUrlFilters::applyAll($dom);
+				
+				if(Conf::$html_body_appendix) {
+					foreach($dom->find('body') as $b) {
+						$b->innertext .= Conf::$html_body_appendix;
+						break;
+					}
+				}
+				
 				$body = $dom->__toString();
 				break;
 		}
