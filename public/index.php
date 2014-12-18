@@ -1,13 +1,29 @@
 <?php
 require 'main.inc';
 
-// Default cache. 
+// Default cache.
 // Will be overwritten by message below if it has it's own Cache-Control header.
 // Send this early, to prevent caching error pages for longer than the duration.
 header('Cache-Control: max-age=' . Conf::$default_cache_control_max_age);
 
 Log::add($_SERVER);
 Log::add(new Conf());
+
+if (isset($_GET[RedirectWhenBlockedFull::QUERY_STRING_PARAM_NAME]) &&
+	 $_GET[RedirectWhenBlockedFull::QUERY_STRING_PARAM_NAME] == Conf::OUTPUT_TYPE_ALT_BASE_URLS) {
+	
+	// Key cannot be empty.
+	if (Conf::$alt_base_urls_key) {
+		
+		// Verify key. Set this in conf-local.inc.
+		if (isset($_GET['key']) && $_GET['key'] == Conf::$alt_base_urls_key) {
+			
+			header('Content-Type: application/javascript');
+			print json_encode(RedirectWhenBlockedFull::getAltBaseUrls());
+			exit();
+		}
+	}
+}
 
 $request = new ProxyHttpRequest();
 Log::add($request);
@@ -27,7 +43,8 @@ if (isset($downstream_origin)) {
 			header('Access-Control-Allow-Origin: ' . $downstream_origin);
 			
 			// See http://stackoverflow.com/questions/12409600/error-request-header-field-content-type-is-not-allowed-by-access-control-allow.
-			header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+			header(
+				'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 		}
 	}
 }
