@@ -24,29 +24,37 @@ class DomUrlFilters
 			if ($attr_val) {
 				
 				// Turn protocol relative URLs into HTTPS.
-				if($attr_val[1] == '/' && $attr_val[0] == '/') {
+				if (isset($attr_val[1]) && $attr_val[1] == '/' &&
+					 $attr_val[0] == '/') {
 					$attr_val = 'https:' . $attr_val;
 					$element->setAttribute($attribute, $attr_val);
-					continue;
-				}
-				
-				$attr_val_components = parse_url($attr_val);
-				
-				// Remove default host.
-				if (isset($attr_val_components['host']) && $attr_val_components['host'] ==
-					 Conf::getDefaultUpstreamBaseUrlComponent('host')) {
-					unset($attr_val_components['host']);
-				}
-				
-				// If relative URL.
-				if (! isset($attr_val_components['host'])) {
-					$attr_val = '.' .
-						 http_build_path_query_fragment($attr_val_components);
-					$element->setAttribute($attribute, $attr_val);
+				} 
+
+				else {
+					$attr_val_components = parse_url($attr_val);
+					
+					// Remove default host.
+					if (isset($attr_val_components['host']) && $attr_val_components['host'] ==
+						 Conf::getDefaultUpstreamBaseUrlComponent('host')) {
+						unset($attr_val_components['host']);
+					}
+					
+					// If URL without host.
+					if (! isset($attr_val_components['host'])) {
+						
+						// Ensure path starts with a slash.
+						if($attr_val_components['path'][0] != '/') {
+							$attr_val_components['path'] = '/' . $attr_val_components['path'];
+						}
+						
+						$attr_val = '.' . http_build_path_query_fragment(
+							$attr_val_components);
+						$element->setAttribute($attribute, $attr_val);
+					}
 				}
 				
 				/*
-				 * Special for existing base href values. They should always end with a slash, 
+				 * Special for existing base href values. They should always end with a slash,
 				 * but browsers are lenient if it's eg http://example.com. But since we may rewrite
 				 * the value later, it might have a path and without the slash it will fail.
 				 */

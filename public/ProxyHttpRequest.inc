@@ -90,7 +90,7 @@ class ProxyHttpRequest extends HttpRequest
 				$body = $message->getBody();
 				
 				$url_path_depth = count(
-					explode('/', $this->getUrlComponent('path'))) - 2;
+					explode('/', trim($this->getUrlComponent('path'), '/'))) - 1;
 				if ($url_path_depth) {
 					$css_base_url = str_repeat('../', $url_path_depth);
 				} else {
