@@ -105,7 +105,9 @@ for(var i in alt_base_urls) {
 
 		$.ajax({
 			dataType: 'jsonp',
-			url: alt_url
+			url: alt_url,
+			cache: true,
+			jsonpCallback: 'jsonpCallback' + i
 		}).success(function(data) {
 			if(!done && typeof data.html !== 'undefined') {
 				done = true;
