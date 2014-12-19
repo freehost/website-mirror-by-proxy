@@ -6,11 +6,6 @@
 <style>
 <?php require 'substitute-page.css' ?>
 </style>
-<script>
-if (top != self) {
-	top.location.replace(window.location);
-}
-</script>
 </head>
 <body>
 	<div>
