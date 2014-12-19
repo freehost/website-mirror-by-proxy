@@ -5,9 +5,9 @@ class TextInternalUrlFilters
 
 	private static $searches = array();
 
-	public static function addSearch($search, $replace = '')
+	public static function addSearch($search, $replace = NULL)
 	{
-		if (! $replace) {
+		if ($replace === NULL) {
 			$replace = rtrim($search, '/') . './';
 		}
 		

@@ -38,6 +38,12 @@ class ProxyHttpRequest extends HttpRequest
 				$base_url_suffix = http_build_scheme_host($url) . '/';
 				RedirectWhenBlockedFull::setBaseUrlSuffix($base_url_suffix);
 			} else {
+				
+				if ($url == '/') {
+					if (Conf::$default_upstream_url) {
+						$url = Conf::$default_upstream_url;
+					}
+				}
 				$url = Conf::$default_upstream_base_url . $url;
 			}
 		}
@@ -74,7 +80,6 @@ class ProxyHttpRequest extends HttpRequest
 		if (isset($headers['Location'])) {
 			TextExternalUrlFilters::applyAll($headers['Location']);
 			$message->setHeaders($headers);
-			return $message;
 		}
 		
 		$this->message_content_type = $this->getContentTypeFromMessage($message);
@@ -135,22 +140,25 @@ class ProxyHttpRequest extends HttpRequest
 				
 				DomUrlFilters::applyAll($dom);
 				
-				if (Conf::$html_body_appendix) {
-					foreach ($dom->find('body') as $b) {
-						$b->innertext .= Conf::$html_body_appendix;
-						break;
+				// Don't insert stuff if request failed.
+				if ($message->getResponseCode() == 200) {
+					if (Conf::$html_body_appendix) {
+						foreach ($dom->find('body') as $b) {
+							$b->innertext .= Conf::$html_body_appendix;
+							break;
+						}
+						
+						$dom_do_reset = true;
 					}
 					
-					$dom_do_reset = true;
-				}
-				
-				if (Conf::$html_head_appendix) {
-					foreach ($dom->find('head') as $h) {
-						$h->innertext .= Conf::$html_head_appendix;
-						break;
+					if (Conf::$html_head_appendix) {
+						foreach ($dom->find('head') as $h) {
+							$h->innertext .= Conf::$html_head_appendix;
+							break;
+						}
+						
+						$dom_do_reset = true;
 					}
-					
-					$dom_do_reset = true;
 				}
 				
 				if (count($dom->find('script[async]')) > 0 && $dom_do_reset) {

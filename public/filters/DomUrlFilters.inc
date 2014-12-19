@@ -33,23 +33,28 @@ class DomUrlFilters
 				else {
 					$attr_val_components = parse_url($attr_val);
 					
-					// Remove default host.
-					if (isset($attr_val_components['host']) && $attr_val_components['host'] ==
-						 Conf::getDefaultUpstreamBaseUrlComponent('host')) {
-						unset($attr_val_components['host']);
-					}
-					
-					// If URL without host.
-					if (! isset($attr_val_components['host'])) {
+					// Nothing to do without paths.
+					if (isset($attr_val_components['path'])) {
 						
-						// Ensure path starts with a slash.
-						if($attr_val_components['path'][0] != '/') {
-							$attr_val_components['path'] = '/' . $attr_val_components['path'];
+						// Remove default host.
+						if (isset($attr_val_components['host']) && $attr_val_components['host'] ==
+							 Conf::getDefaultUpstreamBaseUrlComponent('host')) {
+							unset($attr_val_components['host']);
 						}
 						
-						$attr_val = '.' . http_build_path_query_fragment(
-							$attr_val_components);
-						$element->setAttribute($attribute, $attr_val);
+						// If URL without host.
+						if (! isset($attr_val_components['host'])) {
+							
+							// Ensure path starts with a slash.
+							if ($attr_val_components['path'][0] != '/') {
+								$attr_val_components['path'] = '/' .
+									 $attr_val_components['path'];
+							}
+							
+							$attr_val = '.' . http_build_path_query_fragment(
+								$attr_val_components);
+							$element->setAttribute($attribute, $attr_val);
+						}
 					}
 				}
 				

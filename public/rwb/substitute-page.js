@@ -5,8 +5,8 @@ function iframeLoaded($iframe) {
 	if($iframe.contents().find('head base').length == 0) {
 		$iframe.contents().find('head').prepend($('<head>'));
 	}
-	$iframe.contents().find('head base').attr('target', '_parent');
-	
+	$iframe.contents().find('head base').attr('target', window.name);
+
 	setIframeHeight($iframe);
 	setInterval(function() {
 		setIframeHeight($iframe);

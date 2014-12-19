@@ -11,9 +11,19 @@ require 'rwb/RedirectWhenBlockedFull.inc';
 
 require 'conf-local.inc';
 
+function removeHeaderFromMessage(HttpMessage &$message, $header_name)
+{
+	$headers = $message->getHeaders();
+	if (isset($headers[$header_name])) {
+		unset($headers[$header_name]);
+		$message->setHeaders($headers);
+	}
+}
+
 RedirectWhenBlockedFull::setUrlsFromConfDir();
 
-TextExternalUrlFilters::addHost(Conf::getDefaultUpstreamBaseUrlComponent('host'));
+TextExternalUrlFilters::addHost(
+	Conf::getDefaultUpstreamBaseUrlComponent('host'));
 
 DomUrlFilters::addAttribute('href');
 DomUrlFilters::addAttribute('src');

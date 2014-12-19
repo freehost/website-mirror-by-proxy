@@ -31,6 +31,8 @@ Log::add($request);
 $message = $request->send();
 Log::add($message);
 
+
+
 if (isset($_SERVER['HTTP_ORIGIN'])) {
 	$downstream_origin = $_SERVER['HTTP_ORIGIN'];
 } elseif (isset($_SERVER['HTTP_REFERER'])) {
@@ -40,9 +42,11 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 if (isset($downstream_origin)) {
 	foreach (RedirectWhenBlockedFull::getAltBaseUrls() as $alt_url_base) {
 		if ($downstream_origin == http_build_scheme_host($alt_url_base)) {
+			removeHeaderFromMessage($message, 'Access-Control-Allow-Origin');
 			header('Access-Control-Allow-Origin: ' . $downstream_origin);
 			
 			// See http://stackoverflow.com/questions/12409600/error-request-header-field-content-type-is-not-allowed-by-access-control-allow.
+			removeHeaderFromMessage($message, 'Access-Control-Allow-Headers');
 			header(
 				'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 		}

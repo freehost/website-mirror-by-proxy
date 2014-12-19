@@ -12,6 +12,8 @@ class Conf
 
 	public static $default_upstream_base_url;
 
+	public static $default_upstream_url;
+
 	public static $html_body_appendix = '';
 
 	public static $html_head_appendix = '';

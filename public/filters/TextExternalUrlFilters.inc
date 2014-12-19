@@ -25,6 +25,10 @@ class TextExternalUrlFilters
 			
 			$searches = array();
 			
+			// Convert protocol relative URLs to HTTPS.
+			$searches['"//' . $host] = '"https://' . $host;
+			$searches['\'//' . $host] = '\'https://' . $host;
+			
 			$urls = array();
 			$urls[] = 'http://' . $host;
 			$urls[] = 'https://' . $host;
@@ -33,17 +37,16 @@ class TextExternalUrlFilters
 				$searches[$url] = RedirectWhenBlockedFull::getBaseUrl() . $url;
 			}
 			
-			if ($content_type == ProxyHttpRequest::CONTENT_TYPE_JAVASCRIPT) {
-				$searches['"' . $host . '"'] = '"' .
-					 self::getBaseUrlHostAndPath() . '"';
-			}
-			
 			// Because slashes are escaped in JSON, escape all search/replace patterns too.
-			if ($content_type == ProxyHttpRequest::CONTENT_TYPE_JSON) {
-				$searches2 = array();
+			// JSON-type data may be embedded in JavaScript and HTML as well.
+			if (in_array($content_type, 
+				array(
+					ProxyHttpRequest::CONTENT_TYPE_JAVASCRIPT,
+					ProxyHttpRequest::CONTENT_TYPE_JSON,
+					ProxyHttpRequest::CONTENT_TYPE_TEXT_HTML
+				))) {
 				
-				// Convert protocol relative URLs to HTTPS.
-				$searches2['"\/\/' . $host] = '"https:\/\/' . $host;
+				$searches2 = array();
 				
 				foreach ($searches as $search => $replace) {
 					$search = str_replace('/', '\/', $search);
@@ -51,7 +54,36 @@ class TextExternalUrlFilters
 					$searches2[$search] = $replace;
 				}
 				
-				$searches = $searches2;
+				// For pure JSON content, use these searches only.
+				if ($content_type == ProxyHttpRequest::CONTENT_TYPE_JSON) {
+					$searches = $searches2;
+				} 				
+
+				// Otherwise append.
+				else {
+					$searches += $searches2;
+				}
+			}
+			
+			// Special for javascript (and HTML since it could be in a script tag).
+			if (in_array($content_type, 
+				array(
+					ProxyHttpRequest::CONTENT_TYPE_JAVASCRIPT,
+					ProxyHttpRequest::CONTENT_TYPE_TEXT_HTML
+				))) {
+				foreach (array(
+					"'",
+					'"'
+				) as $quote) {
+					if ($host != Conf::getDefaultUpstreamBaseUrlComponent(
+						'host')) {
+						$prefix = 'http://' . $host;
+					} else {
+						$prefix = '';
+					}
+					$searches[$quote . $host . $quote] = $quote .
+						 self::getBaseUrlHostAndPath() . $prefix . $quote;
+				}
 			}
 			
 			foreach ($searches as $search => $replace) {

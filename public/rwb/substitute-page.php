@@ -6,6 +6,11 @@
 <style>
 <?php require 'substitute-page.css' ?>
 </style>
+<script>
+if (top != self) {
+	top.location.replace(window.location);
+}
+</script>
 </head>
 <body>
 	<div>
@@ -24,6 +29,7 @@
 		seamless="seamless" height="600px" src="<?php print $iframe_src ?>"></iframe>
 	<script src="<?php print $rwb_path_relative_to_request_path ?>/jquery-1.11.1.min.js"></script>
 	<script>
+	window.name = '<?php print self::MAIN_WINDOW_NAME ?>';
 	var alt_base_urls = <?php print json_encode(self::$alt_base_urls) ?>;
 	var get_param_name = '<?php print self::QUERY_STRING_PARAM_NAME ?>';
 	var output_type_jsonp = '<?php print self::OUTPUT_TYPE_JSONP ?>';
