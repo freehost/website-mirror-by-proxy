@@ -88,10 +88,11 @@ class ProxyHttpRequest extends HttpRequest
 		if (isset($headers['Location'])) {
 			if (parse_url($headers['Location'], PHP_URL_HOST)) {
 				TextExternalUrlFilters::applyAll($headers['Location']);
-			} else {
-				$headers['Location'] = dirname($_SERVER['SCRIPT_NAME']) .
-					 $headers['Location'];
 			}
+			
+			// Header redirects require full URLs, with scheme and host.
+			$headers['Location'] = RedirectWhenBlockedFull::getBaseUrl() . ltrim($headers['Location'], '/');
+			
 			$message->setHeaders($headers);
 		}
 		
