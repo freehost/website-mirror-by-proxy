@@ -7,14 +7,19 @@ class Log
 
 	private static $content = array();
 
-	public static function add($a)
+	public static function add($x)
 	{
 		if (! self::$enabled) {
 			return;
 		}
 		
-		$a = gettype($a) . ': ' . print_r($a, true);
-		self::$content[] = $a;
+		$a[] = date('Y-m-d H:i:s.u');
+		$a[] = 'memory_get_usage: ' . (memory_get_usage() / 1024) . ' kilobytes';
+		$a[] = 'memory_get_peak_usage: ' . (memory_get_peak_usage() / 1024) .
+			 ' kilobytes';
+		$a[] = gettype($x);
+		$a[] = print_r($x, true);
+		self::$content[] = implode("\n", $a);
 	}
 
 	public static function enable()
@@ -26,6 +31,8 @@ class Log
 
 	public static function shutdown()
 	{
+		self::add('shutdown');
+		
 		$fh = self::getFileHandle();
 		if (is_resource($fh)) {
 			fwrite($fh, implode("\n------------\n", self::$content));

@@ -165,6 +165,8 @@ class ProxyHttpRequest extends HttpRequest
 					
 					// Bug in Simple HTML Dom means that DOM has to be reloaded before further edits.
 					$body = $dom->__toString();
+					$dom->clear();
+					unset($dom);
 					$dom = str_get_html($body, false, false, '', false);
 					$dom_do_reset = false;
 				}
@@ -175,6 +177,8 @@ class ProxyHttpRequest extends HttpRequest
 				}
 				
 				$body = $dom->__toString();
+				$dom->clear();
+				unset($dom);
 				break;
 		}
 		
