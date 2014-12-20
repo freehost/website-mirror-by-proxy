@@ -116,12 +116,25 @@ class ProxyHttpRequest extends HttpRequest
 					break;
 				}
 				
-				$title = '';
-				foreach ($dom->find('head title') as $title) {
-					$title = $title->text();
-					$title = mb_convert_encoding_plus($title, 'UTF-8', 
+				foreach ($dom->find('head title') as $title_element) {
+					$title = mb_convert_encoding_plus($title_element->text(), 
+						'UTF-8', 
 						$this->getCharsetFromHeadersOrDom($message, $dom));
-					break;
+					if ($title) {
+						$title .= ' | 免翻墙镜像';
+						
+						// Update title in DOM.
+						$title_element->innertext = mb_convert_encoding_plus(
+							$title, 
+							$this->getCharsetFromHeadersOrDom($message, $dom), 
+							'UTF-8');
+						break;
+					}
+				}
+				
+				// Default title.
+				if (! isset($title) || ! $title) {
+					$title = '免翻墙镜像';
 				}
 				
 				// Only apply RWB if response is 200.

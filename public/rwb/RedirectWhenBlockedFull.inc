@@ -7,8 +7,11 @@ class RedirectWhenBlockedFull
 	// This can't be used elsewhere on the website.
 	const QUERY_STRING_PARAM_NAME = 'rwb3498472';
 	
-	// Same as above, used for anchors targeting main window.
-	const MAIN_WINDOW_NAME = self::QUERY_STRING_PARAM_NAME;
+	// Same as above, used for anchors targeting top window.
+	const TOP_WINDOW_NAME = self::QUERY_STRING_PARAM_NAME;
+	
+	// Used to identify main iframe.
+	const IFRAME_WINDOW_NAME = 'rwb3498472i';
 
 	const OUTPUT_TYPE_IFRAME = 1;
 
@@ -166,7 +169,7 @@ class RedirectWhenBlockedFull
 						$html = str_replace($head_tag, 
 							$head_tag . '<base href="' .
 								 RedirectWhenBlockedFull::getBaseUrl() .
-								 self::$base_url_suffix . '" target="' . self::MAIN_WINDOW_NAME . '">', 
+								 self::$base_url_suffix . '" target="' . self::TOP_WINDOW_NAME . '">', 
 								$html, $count);
 						if($count > 0) {
 							break;
