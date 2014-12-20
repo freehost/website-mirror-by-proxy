@@ -5,7 +5,7 @@
  */
 
 // The main URL you want to proxy.
-Conf::$default_upstream_base_url = 'http://program-think.blogspot.sg';
+Conf::$default_upstream_base_url = '';
 
 // Third party hosts which should also be proxied (eg example.com).
 TextExternalUrlFilters::addHosts(

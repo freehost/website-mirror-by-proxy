@@ -25,5 +25,6 @@ RedirectWhenBlockedFull::setUrlsFromConfDir();
 TextExternalUrlFilters::addHost(
 	Conf::getDefaultUpstreamBaseUrlComponent('host'));
 
+DomUrlFilters::addAttribute('action');
 DomUrlFilters::addAttribute('href');
 DomUrlFilters::addAttribute('src');

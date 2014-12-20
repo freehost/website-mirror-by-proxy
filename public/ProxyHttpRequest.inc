@@ -16,6 +16,14 @@ class ProxyHttpRequest extends HttpRequest
 	public function __construct()
 	{
 		parent::__construct($this->getUrl());
+		
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			parent::setMethod(HTTP_METH_POST);
+		}
+		
+		if (isset($_POST)) {
+			parent::setPostFields($_POST);
+		}
 	}
 
 	public function getUrl()
@@ -35,7 +43,7 @@ class ProxyHttpRequest extends HttpRequest
 				}
 				
 				// Use in DomUtlFilters for relative URLs.
-				$base_url_suffix = http_build_scheme_host($url) . '/';
+				$base_url_suffix = http_build_scheme_host_directory($url) . '/';
 				RedirectWhenBlockedFull::setBaseUrlSuffix($base_url_suffix);
 			} else {
 				
@@ -75,10 +83,15 @@ class ProxyHttpRequest extends HttpRequest
 		$message = parent::send();
 		Log::add($message);
 		
-		// If redirect, just rewrite Location header and return.
+		// If redirect, rewrite Location header.
 		$headers = $message->getHeaders();
 		if (isset($headers['Location'])) {
-			TextExternalUrlFilters::applyAll($headers['Location']);
+			if (parse_url($headers['Location'], PHP_URL_HOST)) {
+				TextExternalUrlFilters::applyAll($headers['Location']);
+			} else {
+				$headers['Location'] = dirname($_SERVER['SCRIPT_NAME']) .
+					 $headers['Location'];
+			}
 			$message->setHeaders($headers);
 		}
 		
@@ -152,6 +165,16 @@ class ProxyHttpRequest extends HttpRequest
 				}
 				
 				DomUrlFilters::applyAll($dom);
+				
+				foreach ($dom->find('iframe') as $iframe) {
+					$src = $iframe->getAttribute('src');
+					if ($src) {
+						$src = http_add_query_component($src, 
+							RedirectWhenBlockedFull::QUERY_STRING_PARAM_NAME, 
+							RedirectWhenBlockedFull::OUTPUT_TYPE_IFRAME);
+						$iframe->setAttribute('src', $src);
+					}
+				}
 				
 				// Don't insert stuff if request failed.
 				if ($message->getResponseCode() == 200) {
